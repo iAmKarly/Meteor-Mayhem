@@ -296,6 +296,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4682833573254683201}
+  - component: {fileID: 3410187090320298112}
+  - component: {fileID: 5631968006475841984}
   m_Layer: 0
   m_Name: Target3
   m_TagString: Untagged
@@ -320,6 +322,47 @@ Transform:
   - {fileID: 5426109335044343416}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3410187090320298112
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5013717269604344980}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0d79c9588e54804a9ee29ff334c13f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  meteorHitVFX: {fileID: 317208759918156041, guid: 97ba6ed85ca35a54ea2e550e7e469b2c, type: 3}
+  healthBarUI: {fileID: 2645675977584735129}
+  slider: {fileID: 4195999142442714178}
+  health: 100
+  maxHealth: 100
+  damage: 25
+  speed: 5
+  rotationSpeed: 5
+--- !u!135 &5631968006475841984
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5013717269604344980}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 1.001
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &5221452574680049009
 GameObject:
   m_ObjectHideFlags: 0
@@ -514,7 +557,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: Asteroid_3
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 7989744709370086959, guid: 2408f749a3ad04e23b2abe82997c4b61, type: 3}
     m_RemovedGameObjects:
     - {fileID: 8312623618218207898, guid: 2408f749a3ad04e23b2abe82997c4b61, type: 3}
     m_AddedGameObjects: []

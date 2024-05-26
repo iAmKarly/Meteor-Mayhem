@@ -11,7 +11,6 @@ public class Meteor : MonoBehaviour
     public int range;
     public float speed = 1f;
     public float spawnRate = 2;
-
     private float timeToSpawn = 0;
     
     void Start()
@@ -31,32 +30,21 @@ public class Meteor : MonoBehaviour
             x = 6.5f + Random.Range(-range, range);
             y = transform.position.y + Random.Range(0, range/2);
             z = -50;
-            GameObject meteor = Instantiate(meteorPrefab[Random.Range(0, meteorPrefab.Length)], new Vector3(x, y , z), Random.rotation) as GameObject;
-            meteor.transform.LookAt(target.transform);
-            StartCoroutine(SendHoming(meteor));
+            createMeteor(x, y, z);
         }
     }
 
-    public IEnumerator SendHoming(GameObject meteor)
-    {
-        // Define the final meteor rotation
-        // Update the meteor's position and rotation while it is not destroyed until it reaches targer position
-        MeteorBasic meteorObj = meteor.GetComponentInChildren<MeteorBasic>();
-        GameObject meteorAsset = meteor.transform.GetChild(0).gameObject;
-        
-        Quaternion rotation = Random.rotation;
-        while (meteorObj.health > 0 && Vector3.Distance(target.transform.position, meteor.transform.position) > 5f)
-        {
-            meteor.transform.position += (target.transform.position - meteor.transform.position).normalized * speed * Time.deltaTime;
-            meteorAsset.transform.rotation = Quaternion.Slerp(meteorAsset.transform.rotation, rotation, Time.deltaTime);
-
-            yield return null;
-        }
-        // If it hits the player, will destroy itself
-        hitPlayer(ref meteor);
-    }
-    void hitPlayer(ref GameObject meteor)
-    {
-        Destroy(meteor); 
+    /// <summary>
+    /// Spawns a meteor at a location.
+    /// </summary>
+    /// <param name="x">The X coordinate where the meteor will spawn.</param>
+    /// <param name="y">The Y coordinate where the meteor will spawn.</param>
+    /// <param name="z">The Z coordinate where the meteor will spawn.</param>
+    /// <returns>Returns the meteor created./returns>
+    GameObject createMeteor(float x, float y, float z){
+        GameObject meteor = Instantiate(meteorPrefab[Random.Range(0, meteorPrefab.Length)], new Vector3(x, y , z), Random.rotation) as GameObject;
+        Vector3 targetVector = target.transform.position;
+        meteor.GetComponent<MeteorBasic>().setTarget(targetVector);
+        return meteor;
     }
 }
