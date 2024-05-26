@@ -9,6 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3786728398355300875}
+  - component: {fileID: 1065745712409951353}
+  - component: {fileID: 8368684622238157729}
   m_Layer: 0
   m_Name: Target5
   m_TagString: Untagged
@@ -33,6 +35,45 @@ Transform:
   - {fileID: 6616415307267110816}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1065745712409951353
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4058818340941261836}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0d79c9588e54804a9ee29ff334c13f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  meteorHitVFX: {fileID: 317208759918156041, guid: 97ba6ed85ca35a54ea2e550e7e469b2c, type: 3}
+  slider: {fileID: 3564345460862713387}
+  health: 100
+  maxHealth: 100
+  damage: 25
+  speed: 5
+--- !u!135 &8368684622238157729
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4058818340941261836}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 1.315
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &5657324456968248153
 GameObject:
   m_ObjectHideFlags: 0
@@ -470,6 +511,14 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3218006391846270729, guid: 543f85c367b24464098124fcc11a6955, type: 3}
+      propertyPath: m_Radius
+      value: 0.013
+      objectReference: {fileID: 0}
+    - target: {fileID: 3218006391846270729, guid: 543f85c367b24464098124fcc11a6955, type: 3}
+      propertyPath: m_Center.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6123279987556253554, guid: 543f85c367b24464098124fcc11a6955, type: 3}
       propertyPath: m_Name
       value: Asteroid_5
@@ -514,7 +563,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: -783945551729210509, guid: 543f85c367b24464098124fcc11a6955, type: 3}
     m_RemovedGameObjects:
     - {fileID: 5354801665116005053, guid: 543f85c367b24464098124fcc11a6955, type: 3}
     m_AddedGameObjects: []
