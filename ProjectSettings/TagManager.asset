@@ -7,6 +7,14 @@ TagManager:
   - BasicProjectile
   - bullet
   - particle
+  - ScoreHandler
+  - HeartHandler
+  - LeftHand
+  - RightHand
+  - Body
+  - LeftHandObj
+  - RightHandObj
+  - target
   layers:
   - Default
   - TransparentFX

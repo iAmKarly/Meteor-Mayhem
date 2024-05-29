@@ -335,13 +335,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   meteorHitVFX: {fileID: 317208759918156041, guid: 97ba6ed85ca35a54ea2e550e7e469b2c, type: 3}
-  healthBarUI: {fileID: 2645675977584735129}
-  slider: {fileID: 4195999142442714178}
+  healthBar: {fileID: 4195999142442714178}
   health: 100
   maxHealth: 100
-  damage: 25
-  speed: 5
-  rotationSpeed: 5
+  speed: 10
+  score: 10
 --- !u!135 &5631968006475841984
 SphereCollider:
   m_ObjectHideFlags: 0
