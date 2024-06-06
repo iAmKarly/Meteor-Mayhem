@@ -12,7 +12,7 @@ public class Meteor : MonoBehaviour
     [Tooltip("The x and y range where meteor may spawn.")]
     [SerializeField] private int range;
     [Tooltip("The spawnrate of the meteor")]
-    [SerializeField] private float spawnRate = 2;
+    [SerializeField] private float spawnRate = 0.5f;
 
     private float timeToSpawn = 0;
     
@@ -35,6 +35,10 @@ public class Meteor : MonoBehaviour
             y = Random.Range(-range/2, range/2);
             z = -100;
             createMeteor(x, y, z);
+            
+            if(spawnRate < 20){
+                spawnRate += 0.000001f;
+            }
         }
     }
 
@@ -47,6 +51,7 @@ public class Meteor : MonoBehaviour
     /// <returns>Returns the meteor created./returns>
     GameObject createMeteor(float x, float y, float z){
         GameObject meteor = Instantiate(meteorPrefab[Random.Range(0, meteorPrefab.Length)], new Vector3(x, y , z), Random.rotation) as GameObject;
+        meteor.tag = "Meteor";
         Vector3 targetVector = target.transform.position;
         meteor.GetComponent<MeteorBasic>().setTarget(targetVector);
         return meteor;
