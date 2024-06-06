@@ -18,10 +18,15 @@ public class HandTracker : MonoBehaviour{
     private GameObject[] secondHand, secondHandLines, firstHand, firstHandLines;
     private int firstHandFingerUp, secondHandFingerUp = 0;
     private bool handRecognized = false;
+    private bool bothHandRecognized = false;
+    private int secondHandConfirmation = 0;
     private GameObject body;
+    private Vector3 firstVelocity, secondVelocity;
 
     // Start is called before the first frame update
     void Start(){   
+        body = GameObject.FindGameObjectWithTag("Body").gameObject;
+
         createHandPoints(ref firstHand);
         createHandLines(ref firstHandLines);
         createHandRay(ref firstHandRay);
@@ -29,8 +34,6 @@ public class HandTracker : MonoBehaviour{
         createHandPoints(ref secondHand);
         createHandLines(ref secondHandLines);
         createHandRay(ref secondHandRay);
-
-        body = GameObject.FindGameObjectWithTag("Body").gameObject;
     }
 
     // Update is called once per frame
@@ -55,30 +58,36 @@ public class HandTracker : MonoBehaviour{
                 firstHandFingerUp = int.Parse(points[63]);
                 inputHandPoints(points, ref firstHand, true);
                 inputHandLines(ref firstHandLines, firstHand);
-                inputHandDirection(ref firstHandDirection, firstHand);
+                inputHandDirection(ref firstHandDirection, firstHand, ref firstVelocity);
                 inputHandRay(ref firstHandRay, firstHandOrigin, firstHandDirection, 100);    
                 calculateOrigin(ref firstHandOrigin, firstHand);
             }     
 
             // Check for second hand
             if(points.Length > 64){
-                if (secondHand[0] == null){
-                    resetHand(ref secondHand, ref secondHandLines, ref secondHandRay);
-                    createHandPoints(ref secondHand);
-                    createHandLines(ref secondHandLines);
-                    createHandRay(ref secondHandRay);
-                }
-                else{
-                    secondHandFingerUp = int.Parse(points[127]);
-                    inputHandPoints(points, ref secondHand, false);
-                    inputHandLines(ref secondHandLines, secondHand);
-                    inputHandDirection(ref secondHandDirection, secondHand);
-                    inputHandRay(ref secondHandRay, secondHandOrigin, secondHandDirection, 100);
-                    calculateOrigin(ref secondHandOrigin, secondHand);
+                secondHandConfirmation++;
+                if(secondHandConfirmation > 5){
+                    bothHandRecognized = true;
+                    if (secondHand[0] == null){
+                        resetHand(ref secondHand, ref secondHandLines, ref secondHandRay);
+                        createHandPoints(ref secondHand);
+                        createHandLines(ref secondHandLines);
+                        createHandRay(ref secondHandRay);
+                    }
+                    else{
+                        secondHandFingerUp = int.Parse(points[127]);
+                        inputHandPoints(points, ref secondHand, false);
+                        inputHandLines(ref secondHandLines, secondHand);
+                        inputHandDirection(ref secondHandDirection, secondHand, ref secondVelocity);
+                        inputHandRay(ref secondHandRay, secondHandOrigin, secondHandDirection, 100);
+                        calculateOrigin(ref secondHandOrigin, secondHand);
+                    }
                 }
             }
             else{
                 // Reset second hand
+                bothHandRecognized = false;
+                secondHandConfirmation = 0;
                 resetHand(ref secondHand, ref secondHandLines, ref secondHandRay);
                 secondHandFingerUp = 0;
                 secondHandOrigin = Vector3.zero;
@@ -86,10 +95,12 @@ public class HandTracker : MonoBehaviour{
         }
         else{
             // Reset first hand landmarks
+            handRecognized = false;
+            bothHandRecognized = false;
+            secondHandConfirmation = 0;
             resetHand(ref firstHand, ref firstHandLines, ref firstHandRay);
             firstHandFingerUp = 0;
             secondHandFingerUp = 0;
-            handRecognized = false;
             firstHandOrigin = Vector3.zero;
         }
         if(!handRecognized){
@@ -112,7 +123,7 @@ public class HandTracker : MonoBehaviour{
             hand[i] = new GameObject("HandPoints");
             hand[i] = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             hand[i].transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-            hand[i].transform.position = new Vector3(0, 0, -1000);
+            hand[i].transform.position = new Vector3(body.transform.localPosition.x , body.transform.localPosition.y, -1000);
             hand[i].tag = "Player";
             MeshRenderer meshRenderer = hand[i].GetComponent<MeshRenderer>();
             if (meshRenderer != null){
@@ -162,8 +173,9 @@ public class HandTracker : MonoBehaviour{
     /// </summary>
     /// <param name="handDirection">A list that will store directional data.</param>
     /// <param name="hand">A list of landmark to calculate the perpendicular direction.</param>
+    /// <param name="velocity">A reference to store the current velocity, modified by the function.</param>
     /// <returns>Returns True if the direction is succesfully inputted.</returns>
-    bool inputHandDirection(ref Vector3 handDirection, GameObject[] hand){
+    bool inputHandDirection(ref Vector3 handDirection, GameObject[] hand, ref Vector3 velocity){
         bool success = true;
         // Extract Vector from coordinates
         Vector3 pointA = hand[0].transform.localPosition;
@@ -174,15 +186,17 @@ public class HandTracker : MonoBehaviour{
         Vector3 directionAC = (pointC - pointA).normalized;
 
         // Calculate a perpendicular direction
-        handDirection = Vector3.Cross(directionAB, directionAC).normalized;
-
-        if (handDirection.z > 0 ){
-            handDirection = -handDirection;
+        Vector3 newHandDirection = Vector3.Cross(directionAB, directionAC).normalized;
+        
+        if (newHandDirection.z > 0 ){
+            newHandDirection = -newHandDirection;
         }
 
-        if (handDirection == null){
+        if (newHandDirection == null){
             success = false;
         }
+
+        handDirection = Vector3.SmoothDamp(handDirection, newHandDirection, ref velocity, 0.2f).normalized;
 
         return success;
     }
@@ -363,12 +377,20 @@ public class HandTracker : MonoBehaviour{
     }
 
     /// <summary>
+    /// Returns if the hand is recognized
+    /// </summary>
+    /// <returns>Returns True if the hand is recognized.</returns>
+    public bool checkBothHandRecognized(){
+        return bothHandRecognized;
+    }
+
+    /// <summary>
     /// Return where the player is dodging.
     /// </summary>
     /// <returns>Returns the direction of dodge.</returns>
     public string dodging(){
         string dodgeDirection = "NotDodging";
-        if(!checkHandRecognized()){
+        if(!checkBothHandRecognized()){
             return dodgeDirection;
         }
         if(firstHandOrigin.x != 0 && secondHandOrigin.x != 0){

@@ -13,7 +13,7 @@ public class ShooterBasic : MonoBehaviour
     [Tooltip("Projectile prefab.")]
     [SerializeField] private GameObject projectileBasic;
     [Tooltip("How often can the player shoot.")]
-    [SerializeField] private float firerate = 5f;
+    [SerializeField] private static float firerate = 5f;
 
     private float timeToFire = 0;
     private bool leftHand;
@@ -65,5 +65,21 @@ public class ShooterBasic : MonoBehaviour
 
         Destroy(projectileBasicObj, 4);
         return projectileBasicObj;
+    }
+
+    /// <summary>
+    /// Set firerate of the shooter.
+    /// </summary>
+    /// <param name="newFirerate">The ammount of speed set </param>
+    public static void setFireRate(float newFirerate){
+        ShooterBasic.firerate = newFirerate;
+    }
+
+    /// <summary>
+    /// Return firerate of the shooter.
+    /// </summary>
+    /// <return>Returns the speed.</return>
+    public static float getFireRate(){
+        return ShooterBasic.firerate;
     }
 }

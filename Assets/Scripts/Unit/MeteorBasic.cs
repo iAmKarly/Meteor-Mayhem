@@ -14,11 +14,11 @@ public class MeteorBasic : MonoBehaviour
     [Tooltip("The current helath of the meteor (Cannot exceed maxHealth).")]
     [SerializeField] private float health = 100;
     [Tooltip("The maximum helath of the meteor.")]
-    [SerializeField] private float maxHealth = 100;
+    [SerializeField] private static float maxHealth = 100;
     [Tooltip("The speed of the meteor.")]
-    [SerializeField] private float speed = 5f;
+    [SerializeField] private static float speed = 5f;
     [Tooltip("The score of the meteor.")]
-    [SerializeField] private int score = 10;
+    [SerializeField] private static int score = 10;
 
     private Vector3 target;
     private Vector3 rotation;
@@ -32,6 +32,7 @@ public class MeteorBasic : MonoBehaviour
         scoreHandler = GameObject.FindGameObjectWithTag("ScoreHandler").GetComponent<ScoreHandler>();
         heartHandler = GameObject.FindGameObjectWithTag("HeartHandler").GetComponent<HeartHandler>();
         body = GameObject.FindGameObjectWithTag("Body").gameObject;
+        MeteorBasic.speed += 0.01f;
     }
 
     void Update(){
@@ -71,9 +72,7 @@ public class MeteorBasic : MonoBehaviour
         }
         if(health <= 0)
         {
-            var impact = Instantiate(meteorHitVFX, transform.position, Quaternion.identity) as GameObject;
-            Destroy(impact, 2);
-            Destroy(gameObject);
+            destroyMeteor();
             scoreHandler.addScore(score);
         }
     }
@@ -90,5 +89,30 @@ public class MeteorBasic : MonoBehaviour
             success = true;
         }
         return success;
+    }
+
+    /// <summary>
+    /// Set speed of the meteor.
+    /// </summary>
+    /// <param name="newSpeed">The ammount of speed set </param>
+    public static void setSpeed(float newSpeed){
+        MeteorBasic.speed = newSpeed;
+    }
+
+    /// <summary>
+    /// Return speed of the meteor.
+    /// </summary>
+    /// <return>Returns the speed.</return>
+    public static float getSpeed(){
+        return MeteorBasic.speed;
+    }
+
+    /// <summary>
+    /// Destroy the meteor.
+    /// </summary>
+    public void destroyMeteor(){
+        var impact = Instantiate(meteorHitVFX, transform.position, Quaternion.identity) as GameObject;
+        Destroy(impact, 2);
+        Destroy(gameObject);
     }
 }

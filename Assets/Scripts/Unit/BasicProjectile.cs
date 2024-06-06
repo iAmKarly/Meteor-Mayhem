@@ -9,7 +9,7 @@ public class BasicProjectile : MonoBehaviour
     [Tooltip("The animation of the bullet impact.")]
     [SerializeField] private GameObject basicImpactVFX;
     [Tooltip("The speed of the bullet.")]
-    [SerializeField] private float speed = 0f;
+    [SerializeField] private static float speed = 100f;
     [Tooltip("The direction of the bullet.")]
     [SerializeField] private Vector3 direction;
 
@@ -53,5 +53,21 @@ public class BasicProjectile : MonoBehaviour
             success = false;
         }
         return success;
+    }
+
+    /// <summary>
+    /// Set speed of the bullet.
+    /// </summary>
+    /// <param name="newSpeed">The ammount of speed set </param>
+    public static void setSpeed(float newSpeed){
+        BasicProjectile.speed = newSpeed;
+    }
+
+    /// <summary>
+    /// Lower speed of the meteor.
+    /// </summary>
+    /// <return>Returns the speed.</return>
+    public static float getSpeed(){
+        return BasicProjectile.speed;
     }
 }
