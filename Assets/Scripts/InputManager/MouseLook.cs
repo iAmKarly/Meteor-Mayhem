@@ -34,6 +34,7 @@ public class MouseLook : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Cursor.visible = false;
         leftHand = GameObject.FindGameObjectWithTag("LeftHandObj").gameObject;
         rightHand = GameObject.FindGameObjectWithTag("RightHandObj").gameObject;
         body = GameObject.FindGameObjectWithTag("Body").gameObject;
@@ -46,12 +47,6 @@ public class MouseLook : MonoBehaviour
     {
         updateCrosshair(handTracker.checkHandRecognized());
         if(!handTracker.checkHandRecognized()){
-
-            Renderer leftArm = leftHand.transform.GetChild(0).gameObject.GetComponent<MeshRenderer>();
-            leftArm.enabled = true; 
-            Renderer rightArm = rightHand.transform.GetChild(0).gameObject.GetComponent<MeshRenderer>();
-            rightArm.enabled = true; 
-
             Vector2 wantedVelocityVertical = GetInput() * sensitivity;
             Vector2 wantedVelocityHorizontal = GetInput() * sensitivity;
 
@@ -83,11 +78,6 @@ public class MouseLook : MonoBehaviour
             viewDirection = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0)).direction;
         }
         else{
-            Renderer leftArm = leftHand.transform.GetChild(0).gameObject.GetComponent<MeshRenderer>();
-            leftArm.enabled = false; 
-            Renderer rightArm = rightHand.transform.GetChild(0).gameObject.GetComponent<MeshRenderer>();
-            rightArm.enabled = false; 
-
             cam.transform.localEulerAngles = new Vector3(0, 180, 0);
             body.transform.localEulerAngles = new Vector3(0, 0, 0);
 

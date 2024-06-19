@@ -18,7 +18,6 @@ public class MeteorBasic : MonoBehaviour
     [SerializeField] private static float speed = 5f;
     [Tooltip("The score of the meteor.")]
     [SerializeField] private static int score = 10;
-
     [Tooltip("Explosion sound clip.")]
     [SerializeField] private AudioClip explosionSound;
 
@@ -27,6 +26,7 @@ public class MeteorBasic : MonoBehaviour
     private ScoreHandler scoreHandler;
     private HeartHandler heartHandler;
     private GameObject body;
+    private GameObject unitManager;
     private AudioSource audioSource;
 
     void Start()
@@ -38,12 +38,9 @@ public class MeteorBasic : MonoBehaviour
         body = GameObject.FindGameObjectWithTag("Body").gameObject;
         MeteorBasic.speed += 0.01f;
 
+        unitManager = GameObject.FindGameObjectWithTag("UnitManager").gameObject;
         // Get or add an AudioSource component
-        audioSource = GetComponent<AudioSource>();
-        if (audioSource == null)
-        {
-            audioSource = gameObject.AddComponent<AudioSource>();
-        }
+        audioSource = unitManager.GetComponent<AudioSource>();
     }
 
     void Update()

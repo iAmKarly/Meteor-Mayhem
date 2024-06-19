@@ -17,6 +17,7 @@ TagManager:
   - target
   - UnitManager
   - Meteor
+  - bone
   layers:
   - Default
   - TransparentFX
