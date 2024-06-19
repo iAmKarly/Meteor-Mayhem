@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class ShooterBasic : MonoBehaviour
 {
@@ -17,6 +18,8 @@ public class ShooterBasic : MonoBehaviour
 
     [Tooltip("Audio clip for shooting sound.")]
     [SerializeField] private AudioClip shootingSound;
+    [Tooltip("Animator Script.")]
+    [SerializeField] private HandAnimator handAnimator;
 
     private float timeToFire = 0;
     private bool leftHand;
@@ -40,15 +43,29 @@ public class ShooterBasic : MonoBehaviour
         {
             if (Time.time >= timeToFire)
             {
-                timeToFire = Time.time + 1 / firerate;
+                timeToFire = Time.time + 2 / firerate ;
                 if (handTracker.checkShoot(true))
                 {
                     InstantiateProjectile(handTracker.firstHandOrigin, handTracker.firstHandDirection);
+                    if(String.Equals(handTracker.checkHandType(true), "Left")){
+                        handAnimator.shootLeft();
+                    }
+                    if(String.Equals(handTracker.checkHandType(true), "Right")){
+                        handAnimator.shootRight();
+                    }
                 }
                 if (handTracker.checkShoot(false))
                 {
                     InstantiateProjectile(handTracker.secondHandOrigin, handTracker.secondHandDirection);
+                    if(String.Equals(handTracker.checkHandType(false), "Left")){
+                        handAnimator.shootLeft();
+                    }
+                    if(String.Equals(handTracker.checkHandType(false), "Right")){
+                        handAnimator.shootRight();
+                    }
                 }
+                handAnimator.idleLeft();
+                handAnimator.idleRight();   
             }
         }
         else
@@ -62,12 +79,16 @@ public class ShooterBasic : MonoBehaviour
                     {
                         leftHand = false;
                         InstantiateProjectile(LHFirePoint.position, mouseLook.viewDirection);
+                        handAnimator.shootLeft();
                     }
                     else
                     {
                         leftHand = true;
                         InstantiateProjectile(RHFirePoint.position, mouseLook.viewDirection);
+                        handAnimator.shootRight();
                     }
+                    handAnimator.idleLeft();
+                    handAnimator.idleRight();
                 }
             }
         }

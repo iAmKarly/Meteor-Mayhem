@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Text;
+using System;
 
 public class HandTracker : MonoBehaviour{
     public Vector3 firstHandOrigin, secondHandOrigin, firstHandDirection, secondHandDirection;
@@ -14,14 +16,20 @@ public class HandTracker : MonoBehaviour{
     [Tooltip("The material for the line where the hand is aiming at.")]
     [SerializeField] private Material handRayMaterial;
 
+    [Tooltip("Left Hand.")]
+    [SerializeField] private GameObject leftHand;
+    [Tooltip("Right Hand.")]
+    [SerializeField] private GameObject rightHand;
+
     private GameObject firstHandRay, secondHandRay;
     private GameObject[] secondHand, secondHandLines, firstHand, firstHandLines;
     private int firstHandFingerUp, secondHandFingerUp = 0;
     private bool handRecognized = false;
     private bool bothHandRecognized = false;
-    private int secondHandConfirmation = 0;
+    private int firstHandConfirmation, secondHandConfirmation = 0;
     private GameObject body;
     private Vector3 firstVelocity, secondVelocity;
+    private string firstType, secondType;
 
     // Start is called before the first frame update
     void Start(){   
@@ -30,41 +38,53 @@ public class HandTracker : MonoBehaviour{
         createHandPoints(ref firstHand);
         createHandLines(ref firstHandLines);
         createHandRay(ref firstHandRay);
+        disableVisibility(ref firstHand);
+        disableVisibility(ref firstHandLines);
 
         createHandPoints(ref secondHand);
         createHandLines(ref secondHandLines);
         createHandRay(ref secondHandRay);
+        disableVisibility(ref secondHand);
+        disableVisibility(ref secondHandLines);
     }
-
     // Update is called once per frame
     void Update(){
         // Extract data
         string data = udpReceive.data;
-
         // Check for hand
         if (data.Length > 50){
             handRecognized = true;
             // Pre process data
             data = data.Remove(0,1);
             data = data.Remove(data.Length-1,1);
-            string[] points = data.Split(',');            
-            if (firstHand[0] == null){
-                resetHand(ref firstHand, ref firstHandLines, ref firstHandRay);
-                createHandPoints(ref firstHand);
-                createHandLines(ref firstHandLines);
-                createHandRay(ref firstHandRay);
+            string[] points = data.Split(','); 
+            firstHandConfirmation++;
+            if(firstHandConfirmation > 5){           
+                if (firstHand[0] == null){
+                    resetHand(ref firstHand, ref firstHandLines, ref firstHandRay);
+                    createHandPoints(ref firstHand);
+                    createHandLines(ref firstHandLines);
+                    createHandRay(ref firstHandRay);
+                    disableVisibility(ref firstHand);
+                    disableVisibility(ref firstHandLines);
+
+                    resetHandAnimation(firstType);
+                }
+                else{
+                    firstHandFingerUp = int.Parse(points[63]);
+                    firstType =  points[64].Substring(2, points[64].Length - 3);
+                    inputHandPoints(points, ref firstHand, true);
+                    inputHandLines(ref firstHandLines, firstHand);
+                    inputHandDirection(ref firstHandDirection, firstHand, ref firstVelocity);
+                    inputHandRay(ref firstHandRay, firstHandOrigin, firstHandDirection, 100);    
+                    calculateOrigin(ref firstHandOrigin, firstHand);
+
+                    updateHandAnimation(firstType, firstHandOrigin);
+                }     
             }
-            else{
-                firstHandFingerUp = int.Parse(points[63]);
-                inputHandPoints(points, ref firstHand, true);
-                inputHandLines(ref firstHandLines, firstHand);
-                inputHandDirection(ref firstHandDirection, firstHand, ref firstVelocity);
-                inputHandRay(ref firstHandRay, firstHandOrigin, firstHandDirection, 100);    
-                calculateOrigin(ref firstHandOrigin, firstHand);
-            }     
 
             // Check for second hand
-            if(points.Length > 64){
+            if(points.Length > 65){
                 secondHandConfirmation++;
                 if(secondHandConfirmation > 5){
                     bothHandRecognized = true;
@@ -73,14 +93,21 @@ public class HandTracker : MonoBehaviour{
                         createHandPoints(ref secondHand);
                         createHandLines(ref secondHandLines);
                         createHandRay(ref secondHandRay);
+                        disableVisibility(ref secondHand);
+                        disableVisibility(ref secondHandLines); 
+
+                        resetHandAnimation(secondType);
                     }
                     else{
-                        secondHandFingerUp = int.Parse(points[127]);
+                        secondHandFingerUp = int.Parse(points[128]);
+                        secondType = points[129].Substring(2, points[129].Length - 3);
                         inputHandPoints(points, ref secondHand, false);
                         inputHandLines(ref secondHandLines, secondHand);
                         inputHandDirection(ref secondHandDirection, secondHand, ref secondVelocity);
                         inputHandRay(ref secondHandRay, secondHandOrigin, secondHandDirection, 100);
                         calculateOrigin(ref secondHandOrigin, secondHand);
+
+                        updateHandAnimation(secondType, secondHandOrigin);
                     }
                 }
             }
@@ -88,9 +115,12 @@ public class HandTracker : MonoBehaviour{
                 // Reset second hand
                 bothHandRecognized = false;
                 secondHandConfirmation = 0;
+                
                 resetHand(ref secondHand, ref secondHandLines, ref secondHandRay);
                 secondHandFingerUp = 0;
                 secondHandOrigin = Vector3.zero;
+
+                resetHandAnimation(secondType);
             }
         }
         else{
@@ -98,16 +128,22 @@ public class HandTracker : MonoBehaviour{
             handRecognized = false;
             bothHandRecognized = false;
             secondHandConfirmation = 0;
+            firstHandConfirmation = 0;
             resetHand(ref firstHand, ref firstHandLines, ref firstHandRay);
             firstHandFingerUp = 0;
             secondHandFingerUp = 0;
             firstHandOrigin = Vector3.zero;
+
+            resetHandAnimation(firstType);
         }
         if(!handRecognized){
             resetHand(ref firstHand, ref firstHandLines, ref firstHandRay);
             resetHand(ref secondHand, ref secondHandLines, ref secondHandRay);
             firstHandOrigin = Vector3.zero;
             secondHandOrigin = Vector3.zero;
+
+            resetHandAnimation(firstType);
+            resetHandAnimation(secondType);
         }
     }
 
@@ -146,7 +182,7 @@ public class HandTracker : MonoBehaviour{
     bool inputHandPoints(string[] points, ref GameObject[] hand, bool first){
         bool success = true;
         int displacement1 = 21;
-        int displacement2 = 1;
+        int displacement2 = 2;
 
         if (first){
             displacement1 = 0;
@@ -275,8 +311,8 @@ public class HandTracker : MonoBehaviour{
         bool success = true;
         handRay = new GameObject("HandDirection");
         LineRenderer lineRenderer = handRay.AddComponent<LineRenderer>();
-        lineRenderer.startWidth = 0.1f;
-        lineRenderer.endWidth = 0.1f;
+        lineRenderer.startWidth = 0.01f;
+        lineRenderer.endWidth = 0.01f;
         lineRenderer.SetPosition(0, new Vector3(0,0,-1000));
         lineRenderer.SetPosition(1, new Vector3(0,0,-1000));
         handRay.tag = "Player";
@@ -403,4 +439,66 @@ public class HandTracker : MonoBehaviour{
         }
         return dodgeDirection;
     }
+
+    /// <summary>
+    /// Makes the objects in a list invissible
+    /// </summary>
+    /// <param name="gameObject">The list containing the objects.</param>
+    void disableVisibility(ref GameObject[] gameObject){
+        for (int i = 0; i < gameObject.Length; i++){
+            Renderer renderer = gameObject[i].GetComponent<Renderer>();
+            renderer.enabled = false;
+        }
+    }
+
+    /// <summary>
+    /// Update the position of the animation object
+    /// </summary>
+    /// <param name="type">The type of hands of the animation object.</param>
+    /// <param name="position">The updated position of the animation objext.</param>
+    void updateHandAnimation(string type, Vector3 position){
+        Vector3 newPosition = position;
+        newPosition.z = position.z + 0.01f;
+        if(String.Equals(type, "Left")){
+            leftHand.transform.position = newPosition;
+            leftHand.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
+        }
+        if(String.Equals(type, "Right")){
+            rightHand.transform.position = newPosition;
+            rightHand.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
+        }
+    }
+
+    /// <summary>
+    /// Reset the position of the animation object
+    /// </summary>
+    /// <param name="type">The type of hands of the animation object.</param>
+    void resetHandAnimation(string type){
+        if(String.Equals(type, "Left")){
+            leftHand.transform.localPosition = new Vector3(0.5f,-0.5f,-2);
+            leftHand.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+        }
+        if(String.Equals(type, "Right")){
+            rightHand.transform.localPosition = new Vector3(-0.5f,-0.5f,-2);
+            rightHand.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+        }
+    }   
+
+    /// <summary>
+    /// Get the type of hand
+    /// </summary>
+    /// <param name="first">The hand object's order.</param>
+    /// <returns>Returns the hand objects type.</returns>
+    public string checkHandType(bool first){
+        string type = "";
+        if(first){
+            type = firstType;
+        }
+        else{
+            type = secondType;
+        }
+        return type;
+    }
+
+    
 }

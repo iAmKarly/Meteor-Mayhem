@@ -38,6 +38,7 @@ while True:
             data.extend([lm[0],height-lm[1],lm[2]])
 
         data.extend([sum(detector.fingersUp(hand))])
+        data.extend([hand["type"]])
 
         if len(hands) >= 2:
              # Get the second hand detected
@@ -50,6 +51,7 @@ while True:
                 data.extend([lm[0],height-lm[1],lm[2]])
             
             data.extend([sum(detector.fingersUp(hand))])
+            data.extend([hand["type"]])
 
     else:
         data = [0]
