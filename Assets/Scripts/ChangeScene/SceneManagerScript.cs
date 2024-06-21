@@ -1,13 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class SceneManagerScript : MonoBehaviour
+public class SceneChanger : MonoBehaviour
 {
-    // Start is called before the first frame update
-    public void LoadScene(string scenename)
+    // This method will be called when the button is clicked
+    public void ChangeToPlaythrough1()
     {
-        SceneManager.LoadScene(scenename);
+        // Load the scene named "Playthrough1"
+        SceneManager.LoadScene("Playthrough1");
     }
 }
