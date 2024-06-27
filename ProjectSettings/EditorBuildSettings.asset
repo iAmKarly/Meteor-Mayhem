@@ -11,4 +11,16 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scene/Playthrough1.unity
     guid: 917ff2f0eddd4dd4ab880f702502c592
+  - enabled: 1
+    path: Assets/Scene/ChooseLevel.unity
+    guid: 3e7b2011f544e6a438825073873def88
+  - enabled: 1
+    path: Assets/Scene/Leaderboard.unity
+    guid: 84e19159d2d3e494f9f32bde1c0a3fe3
+  - enabled: 1
+    path: Assets/Scene/Login.unity
+    guid: 37eb2c69f5a07b247ad88fadb4f2504d
+  - enabled: 1
+    path: Assets/Scene/Settings.unity
+    guid: 7e19a129af33ebd4c91ca57608f47452
   m_configObjects: {}

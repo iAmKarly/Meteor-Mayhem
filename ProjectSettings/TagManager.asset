@@ -18,6 +18,11 @@ TagManager:
   - UnitManager
   - Meteor
   - bone
+  - ScoreCanvas
+  - HeartCanvas
+  - CrossHairCanvas
+  - GameOverPanel
+  - UDPreceiver
   layers:
   - Default
   - TransparentFX
