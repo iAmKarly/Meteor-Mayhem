@@ -21,6 +21,11 @@ public class HandTracker : MonoBehaviour{
     [Tooltip("Right Hand.")]
     [SerializeField] private GameObject rightHand;
 
+    [Tooltip("The menu manager.")]
+    [SerializeField] private MainMenuSceneManager mainMenuSceneManager;
+    [Tooltip("The level manager.")]
+    [SerializeField] private LevelSceneManager levelManager;
+
     private GameObject firstHandRay, secondHandRay;
     private GameObject[] secondHand, secondHandLines, firstHand, firstHandLines;
     private int firstHandFingerUp, secondHandFingerUp = 0;
@@ -31,6 +36,9 @@ public class HandTracker : MonoBehaviour{
     private Vector3 firstVelocity, secondVelocity;
     private string firstType, secondType;
 
+    private bool handsObjExist;
+    private int gestureConfirmationStart, gestureConfirmationQuit, gestureConfirmationLogin, gestureConfirmationLB, gestureConfirmationSetting, gestureConfirmationBegin = 0;
+
     // Start is called before the first frame update
     void Start(){   
         body = GameObject.FindGameObjectWithTag("Body").gameObject;
@@ -38,17 +46,27 @@ public class HandTracker : MonoBehaviour{
         createHandPoints(ref firstHand);
         createHandLines(ref firstHandLines);
         createHandRay(ref firstHandRay);
-        disableVisibility(ref firstHand);
-        disableVisibility(ref firstHandLines);
-
+        
         createHandPoints(ref secondHand);
         createHandLines(ref secondHandLines);
         createHandRay(ref secondHandRay);
-        disableVisibility(ref secondHand);
-        disableVisibility(ref secondHandLines);
+
+        if(leftHand != null && rightHand != null){
+            disableVisibility(ref firstHand);
+            disableVisibility(ref firstHandLines);
+            disableVisibility(ref secondHand);
+            disableVisibility(ref secondHandLines);
+            handsObjExist = true;
+        }
+        else{
+            handsObjExist = false;
+        }
     }
     // Update is called once per frame
     void Update(){
+        if(udpReceive == null){
+            udpReceive = GameObject.FindGameObjectWithTag("UDPreceiver").gameObject.GetComponent<UDPReceive>();
+        }
         // Extract data
         string data = udpReceive.data;
         // Check for hand
@@ -65,10 +83,12 @@ public class HandTracker : MonoBehaviour{
                     createHandPoints(ref firstHand);
                     createHandLines(ref firstHandLines);
                     createHandRay(ref firstHandRay);
-                    disableVisibility(ref firstHand);
-                    disableVisibility(ref firstHandLines);
 
-                    resetHandAnimation(firstType);
+                    if(handsObjExist){
+                        disableVisibility(ref firstHand);
+                        disableVisibility(ref firstHandLines);
+                        resetHandAnimation(firstType);
+                    }  
                 }
                 else{
                     firstHandFingerUp = int.Parse(points[63]);
@@ -79,7 +99,9 @@ public class HandTracker : MonoBehaviour{
                     inputHandRay(ref firstHandRay, firstHandOrigin, firstHandDirection, 100);    
                     calculateOrigin(ref firstHandOrigin, firstHand);
 
-                    updateHandAnimation(firstType, firstHandOrigin);
+                    if(handsObjExist){
+                        updateHandAnimation(firstType, firstHandOrigin);
+                    }
                 }     
             }
 
@@ -93,10 +115,12 @@ public class HandTracker : MonoBehaviour{
                         createHandPoints(ref secondHand);
                         createHandLines(ref secondHandLines);
                         createHandRay(ref secondHandRay);
-                        disableVisibility(ref secondHand);
-                        disableVisibility(ref secondHandLines); 
 
-                        resetHandAnimation(secondType);
+                        if(handsObjExist){
+                            disableVisibility(ref secondHand);
+                            disableVisibility(ref secondHandLines); 
+                            resetHandAnimation(secondType);
+                        }
                     }
                     else{
                         secondHandFingerUp = int.Parse(points[128]);
@@ -107,7 +131,9 @@ public class HandTracker : MonoBehaviour{
                         inputHandRay(ref secondHandRay, secondHandOrigin, secondHandDirection, 100);
                         calculateOrigin(ref secondHandOrigin, secondHand);
 
-                        updateHandAnimation(secondType, secondHandOrigin);
+                        if(handsObjExist){
+                            updateHandAnimation(secondType, secondHandOrigin);
+                        }
                     }
                 }
             }
@@ -120,8 +146,11 @@ public class HandTracker : MonoBehaviour{
                 secondHandFingerUp = 0;
                 secondHandOrigin = Vector3.zero;
 
-                resetHandAnimation(secondType);
+                if(handsObjExist){
+                    resetHandAnimation(secondType);
+                }
             }
+            checkGesture();
         }
         else{
             // Reset first hand landmarks
@@ -134,7 +163,9 @@ public class HandTracker : MonoBehaviour{
             secondHandFingerUp = 0;
             firstHandOrigin = Vector3.zero;
 
-            resetHandAnimation(firstType);
+            if(handsObjExist){
+                resetHandAnimation(firstType);
+            }
         }
         if(!handRecognized){
             resetHand(ref firstHand, ref firstHandLines, ref firstHandRay);
@@ -142,8 +173,10 @@ public class HandTracker : MonoBehaviour{
             firstHandOrigin = Vector3.zero;
             secondHandOrigin = Vector3.zero;
 
-            resetHandAnimation(firstType);
-            resetHandAnimation(secondType);
+            if(handsObjExist){
+                resetHandAnimation(firstType);
+                resetHandAnimation(secondType);
+            }
         }
     }
 
@@ -500,5 +533,56 @@ public class HandTracker : MonoBehaviour{
         return type;
     }
 
-    
+    public void checkGesture(){
+        if(mainMenuSceneManager != null)
+        {
+            if ((firstHandFingerUp == 1 || secondHandFingerUp == 1)){
+                if(gestureConfirmationStart>500){
+                    mainMenuSceneManager.ChangeToChooseLevel();
+                }
+                gestureConfirmationStart++;
+            }
+            else if ((firstHandFingerUp == 2 || secondHandFingerUp == 2)){
+                if(gestureConfirmationLogin>500){
+                    mainMenuSceneManager.OpenLogin();
+                }
+                gestureConfirmationLogin++;
+            }
+            else if ((firstHandFingerUp == 3 || secondHandFingerUp == 3)){
+                if(gestureConfirmationLB>500){
+                    mainMenuSceneManager.OpenLeaderboard();
+                }
+                gestureConfirmationLB++;
+            }
+            else if ((firstHandFingerUp == 4 || secondHandFingerUp == 4)){
+                if(gestureConfirmationSetting>500){
+                    mainMenuSceneManager.OpenSettings();
+                }
+                gestureConfirmationSetting++;
+            }
+            else if ((firstHandFingerUp == 5 || secondHandFingerUp == 5)){
+                if(gestureConfirmationQuit>500){
+                    mainMenuSceneManager.QuitApplication();
+                    print("quit");
+                }
+                gestureConfirmationQuit++;
+            }
+        }
+        else if(levelManager != null){
+            if ((firstHandFingerUp == 1 || secondHandFingerUp == 1)){
+                if(gestureConfirmationBegin>500){
+                    levelManager.StartGameBeginner();
+                }
+                gestureConfirmationBegin++;
+            }
+        }
+        else{
+            gestureConfirmationBegin = 0;
+            gestureConfirmationStart = 0;
+            gestureConfirmationLogin = 0;
+            gestureConfirmationLB = 0;
+            gestureConfirmationSetting = 0;
+            gestureConfirmationQuit = 0;
+        }
+    }
 }

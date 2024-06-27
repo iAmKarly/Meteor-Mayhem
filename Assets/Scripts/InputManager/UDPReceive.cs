@@ -9,12 +9,12 @@ public class UDPReceive : MonoBehaviour
 {
 
     Thread receiveThread;
-    UdpClient client; 
+    public UdpClient client; 
     [SerializeField] private int port = 5052;
     public bool startRecieving = true;
     public bool printToConsole = false;
     public string data;
-
+    public static UDPReceive instance = null;
 
     public void Start()
     {
@@ -45,6 +45,19 @@ public class UDPReceive : MonoBehaviour
             {
                 print(err.ToString());
             }
+        }
+    }
+
+    private void Awake()
+    {
+        if(instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(base.gameObject); 
+        }
+        else
+        {
+            Destroy(base.gameObject);
         }
     }
 }

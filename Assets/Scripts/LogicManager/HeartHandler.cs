@@ -8,6 +8,10 @@ public class HeartHandler : MonoBehaviour
     [SerializeField] private Canvas hearts;
     [Tooltip("The current number of hearts.")]
     [SerializeField] private int currentHearts = 3;
+    [Tooltip("The game manager.")]
+    [SerializeField] private GameManager gameManager;
+
+    private bool isDead = false;
 
     void updateHearts(){
         switch(currentHearts){
@@ -57,6 +61,10 @@ public class HeartHandler : MonoBehaviour
                 GameObject heart1 = hearts.transform.GetChild(0).GetChild(1).gameObject;
                 CanvasGroup heart1CanvasGroup = heart1.GetComponent<CanvasGroup>();
                 heart1CanvasGroup.alpha = 0;
+                if(!isDead){
+                    isDead = true;
+                    gameManager.gameOver();
+                }
                 break;
             }     
         }
@@ -73,5 +81,10 @@ public class HeartHandler : MonoBehaviour
         if (currentHearts < 3)
             currentHearts += 1;
         updateHearts();
+    }
+
+    public void restartHearts(){
+        currentHearts = 3;
+        isDead = false;
     }
 }

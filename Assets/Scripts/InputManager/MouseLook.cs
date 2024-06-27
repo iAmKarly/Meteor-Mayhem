@@ -34,7 +34,6 @@ public class MouseLook : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Cursor.visible = false;
         leftHand = GameObject.FindGameObjectWithTag("LeftHandObj").gameObject;
         rightHand = GameObject.FindGameObjectWithTag("RightHandObj").gameObject;
         body = GameObject.FindGameObjectWithTag("Body").gameObject;
