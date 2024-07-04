@@ -3,7 +3,20 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - BasicProjectile
+  - bullet
+  - particle
+  - ScoreHandler
+  - HeartHandler
+  - LeftHand
+  - RightHand
+  - Body
+  - LeftHandObj
+  - RightHandObj
+  - target
+  - UnitManager
+  - Meteor
   layers:
   - Default
   - TransparentFX
