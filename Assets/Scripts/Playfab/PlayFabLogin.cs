@@ -190,6 +190,13 @@ public class PlayFabLogin : MonoBehaviour
         return PlayerPrefs.HasKey("USERNAME") && PlayerPrefs.HasKey("PASSWORD");
     }
 
+    public void Logout()
+    {
+        PlayerPrefs.DeleteKey("USERNAME");
+        PlayerPrefs.DeleteKey("PASSWORD");
+        Debug.Log("Logged out successfully");
+    }
+
     private void ShowError(string errorMessage)
     {
         Canvas canvas = FindObjectOfType<Canvas>();
@@ -225,3 +232,4 @@ public class PlayFabLogin : MonoBehaviour
         }
     }
 }
+
