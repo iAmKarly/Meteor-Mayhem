@@ -1464,6 +1464,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c68a496586ca9f2469b94b4042c449f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  errorPanelPrefab: {fileID: 2444075650131389498, guid: a2adee10b34c03a44b72a9957fad22ed, type: 3}
   LeaderboardPanel: {fileID: 686878701}
   listingPrefab: {fileID: 6077361501235868682, guid: 450dd972e7303f841b14bde0f54c937d, type: 3}
   listingContainer: {fileID: 2135100367}
