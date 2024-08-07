@@ -18,4 +18,11 @@ public class ScoreHandler : MonoBehaviour
         playerScore = playerScore + score;
         scoreText.text  = playerScore.ToString();
     }
+    /// <summary>
+    /// returns the score of the player
+    /// </summary>
+    /// <returns>returns the score of the player.</returns>
+    public int getScore(){
+        return playerScore;
+    }
 }

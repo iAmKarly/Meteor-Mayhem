@@ -7,57 +7,108 @@ using System.Threading;
 
 public class UDPReceive : MonoBehaviour
 {
-
-    Thread receiveThread;
-    public UdpClient client; 
+    private Thread receiveThread;
+    private UdpClient client; 
     [SerializeField] private int port = 5052;
-    public bool startRecieving = true;
+    public bool startReceiving = true;
     public bool printToConsole = false;
     public string data;
     public static UDPReceive instance = null;
 
-    public void Start()
-    {
-        receiveThread = new Thread(
-            new ThreadStart(ReceiveData));
-        receiveThread.IsBackground = true;
-        receiveThread.Start();
-    }
-
-
-    // receive thread
-    private void ReceiveData()
-    {
-
-        client = new UdpClient(port);
-        while (startRecieving)
-        {
-
-            try
-            {
-                IPEndPoint anyIP = new IPEndPoint(IPAddress.Any, 0);
-                byte[] dataByte = client.Receive(ref anyIP);
-                data = Encoding.UTF8.GetString(dataByte);
-
-                if (printToConsole) { print(data); }
-            }
-            catch (Exception err)
-            {
-                print(err.ToString());
-            }
-        }
-    }
-
     private void Awake()
     {
-        if(instance == null)
+        if (instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(base.gameObject); 
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
-            Destroy(base.gameObject);
+            Destroy(gameObject);
+            return;
+        }
+    }
+
+    public void Start()
+    {
+        Init();
+    }
+
+    private void Init()
+    {
+        if (receiveThread == null)
+        {
+            receiveThread = new Thread(new ThreadStart(ReceiveData))
+            {
+                IsBackground = true
+            };
+            receiveThread.Start();
+        }
+    }
+
+    private void ReceiveData()
+    {
+        client = new UdpClient(port);
+        IPEndPoint anyIP = new IPEndPoint(IPAddress.Any, 0);
+
+        try
+        {
+            while (startReceiving)
+            {
+                try
+                {
+                    byte[] dataByte = client.Receive(ref anyIP);
+                    data = Encoding.UTF8.GetString(dataByte);
+
+                    if (printToConsole)
+                    {
+                        Debug.Log(data);
+                    }
+                }
+                catch (SocketException sockEx)
+                {
+                    Debug.LogError($"SocketException: {sockEx.Message}");
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"Exception: {ex}");
+                }
+            }
+        }
+        finally
+        {
+            client.Close();
+            Debug.Log("UDP client closed.");
+        }
+    }
+
+    private void OnApplicationQuit()
+    {
+        startReceiving = false;
+        if (receiveThread != null)
+        {
+            receiveThread.Join(500); // Wait for the thread to terminate
+            receiveThread.Abort();
+        }
+
+        if (client != null)
+        {
+            client.Close();
+        }
+    }
+
+    private void OnDestroy()
+    {
+        startReceiving = false;
+        if (receiveThread != null)
+        {
+            receiveThread.Join(500); // Wait for the thread to terminate
+            receiveThread.Abort();
+        }
+
+        if (client != null)
+        {
+            client.Close();
         }
     }
 }

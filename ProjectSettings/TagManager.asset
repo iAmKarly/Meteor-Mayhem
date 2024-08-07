@@ -23,6 +23,10 @@ TagManager:
   - CrossHairCanvas
   - GameOverPanel
   - UDPreceiver
+  - RocketExplosion
+  - powerup
+  - leftButton
+  - rightButton
   layers:
   - Default
   - TransparentFX
@@ -30,7 +34,7 @@ TagManager:
   - 
   - Water
   - UI
-  - 
+  - behind
   - 
   - 
   - 
@@ -59,4 +63,10 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: UI
+    uniqueID: 1382763249
+    locked: 0
+  - name: NOTUI
+    uniqueID: 3262013541
     locked: 0

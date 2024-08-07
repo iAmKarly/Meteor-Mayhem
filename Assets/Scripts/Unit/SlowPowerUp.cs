@@ -17,10 +17,17 @@ public class SlowPowerUp : MonoBehaviour
     {
         if(co.gameObject.tag == "bullet")  
         {
-            unitManager.GetComponent<PowerUpSpawner>().StartCoroutine(activateSlowPowerUp(timeLimit));
+            activatePowerUp();
         }
     }
 
+    /// <summary>
+    /// Activate the power up
+    /// </summary>
+    public void activatePowerUp()
+    {
+        unitManager.GetComponent<PowerUpSpawner>().StartCoroutine(activateSlowPowerUp(timeLimit));
+    }
 
     /// <summary>
     /// Activates the slow power up for a duration.

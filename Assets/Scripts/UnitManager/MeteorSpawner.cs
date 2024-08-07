@@ -15,12 +15,6 @@ public class Meteor : MonoBehaviour
     [SerializeField] private float spawnRate = 0.5f;
 
     private float timeToSpawn = 0;
-    
-    // Start is called before the first frame update
-    void Start()
-    {
-    
-    }
 
     // Update is called once per frame
     void Update()

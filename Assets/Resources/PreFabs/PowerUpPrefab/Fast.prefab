@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 3902393812631869272}
   m_Layer: 0
   m_Name: Fast
-  m_TagString: Untagged
+  m_TagString: powerup
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

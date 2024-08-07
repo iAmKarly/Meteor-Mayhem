@@ -11,19 +11,22 @@ public class FastPowerUp : MonoBehaviour
     void Start(){
         unitManager = GameObject.FindGameObjectWithTag("UnitManager").gameObject;
     }
-
-    void Update(){
-
-    }
     
     void OnCollisionEnter (Collision co)
     {
         if(co.gameObject.tag == "bullet")  
         {
-            unitManager.GetComponent<PowerUpSpawner>().StartCoroutine(activateFastPowerUp(timeLimit));
+            activatePowerUp();
         }
     }
 
+    /// <summary>
+    /// Activate the power up
+    /// </summary>
+    public void activatePowerUp()
+    {
+        unitManager.GetComponent<PowerUpSpawner>().StartCoroutine(activateFastPowerUp(timeLimit));
+    }
 
     /// <summary>
     /// Activates the fast power up for a duration.
@@ -32,11 +35,17 @@ public class FastPowerUp : MonoBehaviour
     /// <returns>Returns IEnumerator.</returns>
     IEnumerator activateFastPowerUp(int seconds)
     {
-        float originalSpeed = BasicProjectile.getSpeed();
-        if (originalSpeed < 500){
-            BasicProjectile.setSpeed(originalSpeed + 200);
+        float originalSpeedBasic = BasicProjectile.getSpeed();
+        if (originalSpeedBasic < 500){
+            BasicProjectile.setSpeed(originalSpeedBasic + 200);
             yield return new WaitForSeconds(seconds);
-            BasicProjectile.setSpeed(originalSpeed);
+            BasicProjectile.setSpeed(originalSpeedBasic);
+        }
+        float originalSpeedRocket = RocketProjectile.getSpeed();
+        if (originalSpeedRocket < 100){
+            RocketProjectile.setSpeed(originalSpeedRocket + 50);
+            yield return new WaitForSeconds(seconds);
+            RocketProjectile.setSpeed(originalSpeedRocket);
         }
     }
 }
