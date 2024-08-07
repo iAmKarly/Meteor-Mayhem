@@ -21,10 +21,18 @@ public class NukePowerUp : MonoBehaviour
     {
         if(co.gameObject.tag == "bullet")  
         {
-            var impact = Instantiate(bigExplosion, transform.position, Quaternion.identity) as GameObject;
-            Destroy(impact, 1);
-            unitManager.GetComponent<PowerUpSpawner>().StartCoroutine(activateNukePowerUp(delay));
+            activatePowerUp();
         }
+    }
+
+    /// <summary>
+    /// Activate the power up
+    /// </summary>
+    public void activatePowerUp()
+    {
+        var impact = Instantiate(bigExplosion, transform.position, Quaternion.identity) as GameObject;
+        Destroy(impact, 1);
+        unitManager.GetComponent<PowerUpSpawner>().StartCoroutine(activateNukePowerUp(delay));
     }
 
     /// <summary>

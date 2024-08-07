@@ -11,15 +11,20 @@ public class HeartPowerUp : MonoBehaviour
         heartHandler = GameObject.FindGameObjectWithTag("HeartHandler").GetComponent<HeartHandler>();
     }
 
-    void Update(){
-
-    }
     
     void OnCollisionEnter (Collision co)
     {
         if(co.gameObject.tag == "bullet")  
         {
-            heartHandler.increaseHearts();
+            activatePowerUp();
         }
+    }
+
+    /// <summary>
+    /// Activate the power up
+    /// </summary>
+    public void activatePowerUp()
+    {
+        heartHandler.increaseHearts();
     }
 }

@@ -43,10 +43,40 @@ public class BasicPowerUp : MonoBehaviour
     {
         if(co.gameObject.tag == "bullet")  
         {
-            var impact = Instantiate(powerUpHitVFX, transform.position, Quaternion.identity) as GameObject;
-            Destroy(impact, 2);
-            Destroy(gameObject);
+            activatePowerUp ();
         }
+    }
+
+    /// <summary>
+    /// Activate the power up based on the type of power up itself
+    /// </summary>
+    public void activatePowerUp ()
+    {
+        var impact = Instantiate(powerUpHitVFX, transform.position, Quaternion.identity) as GameObject;
+        BulletPowerUp BPU = GetComponent<BulletPowerUp>(); 
+        FastPowerUp FPU = GetComponent<FastPowerUp>();
+        HeartPowerUp HPU = GetComponent<HeartPowerUp>();
+        NukePowerUp NPU = GetComponent<NukePowerUp>();
+        SlowPowerUp SPU = GetComponent<SlowPowerUp>();
+
+        if(BPU != null){
+            BPU.activatePowerUp();
+        }
+        if(FPU != null){
+            FPU.activatePowerUp();
+        }
+        if(HPU != null){
+            HPU.activatePowerUp();
+        }
+        if(NPU != null){
+            NPU.activatePowerUp();
+        }
+        if(SPU != null){
+            SPU.activatePowerUp();
+        }
+
+        Destroy(impact, 2);
+        Destroy(gameObject);
     }
 
     /// <summary>

@@ -78,7 +78,13 @@ public class MeteorBasic : MonoBehaviour
         if (co.gameObject.tag == "bullet")
         {
             BasicProjectile basicProjectile = co.gameObject.GetComponent<BasicProjectile>();
-            health = health - basicProjectile.damage;
+            RocketProjectile rocketProjectile = co.gameObject.GetComponent<RocketProjectile>();
+            if (basicProjectile != null){
+                health = health - basicProjectile.damage;
+            }
+            else{
+                health = health - rocketProjectile.damage;
+            }
             healthBar.value = health / maxHealth;
         }
         if (health <= 0)
@@ -137,5 +143,20 @@ public class MeteorBasic : MonoBehaviour
         }
 
         Destroy(gameObject);
+    }
+
+    /// <summary>
+    /// Deals damage to the meteor
+    /// </summary>
+    /// /// <param name="damage">The amount of damage dealt </param>
+    public void dealDamage(int damage)
+    {
+        health = health - damage;
+        if (health <= 0)
+        {
+            destroyMeteor();
+            scoreHandler.addScore(score);
+        }
+        healthBar.value = health / maxHealth;
     }
 }

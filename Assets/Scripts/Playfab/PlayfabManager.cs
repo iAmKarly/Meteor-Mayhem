@@ -9,7 +9,7 @@ public class PlayfabManager : MonoBehaviour
 {
     public TMP_InputField usernameInput;
     public TMP_InputField passwordInput;
-    public Text messageText;
+    public TMP_Text messageText;
 
     public void RegisterButton()
     {
@@ -20,7 +20,7 @@ public class PlayfabManager : MonoBehaviour
             RequireBothUsernameAndEmail = false
         };
 
-        PlayFabClientAPI.RegisterPlayFabUser(registerRequest, OnRegisterSuccess, OnError);
+        PlayFabClientAPI.RegisterPlayFabUser(registerRequest, OnRegisterSuccess, OnRegisterError);
     }
 
     void OnRegisterSuccess(RegisterPlayFabUserResult result)
@@ -36,17 +36,28 @@ public class PlayfabManager : MonoBehaviour
             Password = passwordInput.text
         };
 
-        PlayFabClientAPI.LoginWithPlayFab(loginRequest, OnLoginSuccess, OnError);
+        PlayFabClientAPI.LoginWithPlayFab(loginRequest, OnLoginSuccess, OnLoginError);
     }
 
     void OnLoginSuccess(LoginResult result)
     {
         messageText.text = "Login successful!";
+        messageText.color = new Color(0.384f, 0.925f, 0.173f, 1.0f);
+        print("Success");
     }
 
-    void OnError(PlayFabError error)
+    void OnLoginError(PlayFabError error)
     {
-        messageText.text = "Error: " + error.ErrorMessage;
+        messageText.text = "Login failed!";
+        messageText.color = new Color(1f, 0f, 0f, 1.0f);
+        print("Error: " + error.ErrorMessage);
+    }
+
+    void OnRegisterError(PlayFabError error)
+    {
+        messageText.text = "Sign Up failed!";
+        messageText.color = new Color(1f, 0f, 0f, 1.0f);
+        print("Error: " + error.ErrorMessage);
     }
 }
 

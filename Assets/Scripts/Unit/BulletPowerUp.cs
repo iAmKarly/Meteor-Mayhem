@@ -11,19 +11,22 @@ public class BulletPowerUp : MonoBehaviour
     void Start(){
         unitManager = GameObject.FindGameObjectWithTag("UnitManager").gameObject;
     }
-
-    void Update(){
-
-    }
     
     void OnCollisionEnter (Collision co)
     {
         if(co.gameObject.tag == "bullet")  
         {
-            unitManager.GetComponent<PowerUpSpawner>().StartCoroutine(activateBulletPowerUp(timeLimit));
+            activatePowerUp();
         }
     }
 
+    /// <summary>
+    /// Activate the power up
+    /// </summary>
+    public void activatePowerUp()
+    {
+        unitManager.GetComponent<PowerUpSpawner>().StartCoroutine(activateBulletPowerUp(timeLimit));
+    }
 
     /// <summary>
     /// Activates the bullet power up for a duration.
@@ -32,11 +35,23 @@ public class BulletPowerUp : MonoBehaviour
     /// <returns>Returns IEnumerator.</returns>
     IEnumerator activateBulletPowerUp(int seconds)
     {
-        float originalFireRate = ShooterBasic.getFireRate();
-        if (originalFireRate < 15){
-            ShooterBasic.setFireRate(originalFireRate + 5);
+        float originalFireRateBasic = ShooterBasic.getFireRate();
+        if (originalFireRateBasic < 6){
+            ShooterBasic.setFireRate(originalFireRateBasic + 5);
             yield return new WaitForSeconds(seconds);
-            ShooterBasic.setFireRate(originalFireRate);
+            ShooterBasic.setFireRate(originalFireRateBasic);
+        }
+        float originalFireRateRocket = ShooterRocket.getFireRate();
+        if (originalFireRateRocket < 2){
+            ShooterRocket.setFireRate(originalFireRateRocket + 1);
+            yield return new WaitForSeconds(seconds);
+            ShooterRocket.setFireRate(originalFireRateRocket);
+        }
+        float originalFireRateLaser = ShooterLaser.getFireRate();
+        if (originalFireRateLaser < 21){
+            ShooterLaser.setFireRate(originalFireRateLaser + 10);
+            yield return new WaitForSeconds(seconds);
+            ShooterLaser.setFireRate(originalFireRateLaser);
         }
     }
 }

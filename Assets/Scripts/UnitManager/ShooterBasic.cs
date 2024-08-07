@@ -27,6 +27,7 @@ public class ShooterBasic : MonoBehaviour
 
     void Start()
     {
+        firerate = 5f;
         // Get or add an AudioSource component
         audioSource = GetComponent<AudioSource>();
         if (audioSource == null)

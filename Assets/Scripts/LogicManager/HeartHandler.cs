@@ -13,6 +13,9 @@ public class HeartHandler : MonoBehaviour
 
     private bool isDead = false;
 
+    /// <summary>
+    /// Update the heart canvas based one the current heart the player has
+    /// </summary>
     void updateHearts(){
         switch(currentHearts){
             case 3:{
@@ -70,21 +73,23 @@ public class HeartHandler : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Decrease the player health
+    /// </summary>
     [ContextMenu("Decrease Hearts")]
     public void decreaseHearts(){
         if (currentHearts > 0)
             currentHearts -= 1;
         updateHearts();
     }
+
+    /// <summary>
+    /// Increase the player health
+    /// </summary>
     [ContextMenu("Increase Hearts")]
     public void increaseHearts(){
         if (currentHearts < 3)
             currentHearts += 1;
         updateHearts();
-    }
-
-    public void restartHearts(){
-        currentHearts = 3;
-        isDead = false;
     }
 }
